@@ -1,0 +1,99 @@
+// Класс, который содержит все математические операции
+object Calculator {
+    //плюс, минус, умножение, деление и корень
+    fun plus(x: Double, y: Double) = x + y
+    fun minus(x: Double, y: Double) = x - y
+    fun umnoshite(x: Double, y: Double) = x * y
+    //Проверка
+    fun delenie(x: Double, y: Double): Double {
+        if (y == 0.0) {
+            throw ArithmeticException("Делить на ноль нельзя!")
+        }
+        return x / y
+    }
+    //Проверка
+    fun korene(x: Double): Double {
+        if (x < 0) {
+            throw ArithmeticException("Отрицательный корень!")
+        }
+        return kotlin.math.sqrt(x)
+    }
+    //степень, синус, косинус и тангенс
+    fun stepene(x: Double, y: Double) = Math.pow(x, y)//возведение в степень
+    fun sinus(deg: Double) = kotlin.math.sin(Math.toRadians(deg))//toRadians - перевод из градусов в радианы
+    fun cosinus(deg: Double) = kotlin.math.cos(Math.toRadians(deg))
+    fun tangens(deg: Double) = kotlin.math.tan(Math.toRadians(deg))
+    //Проверка
+    fun log10(x: Double): Double {//десятичный логарифм
+        if (x <= 0) {
+            throw ArithmeticException("Логарифм от отрицательного числа!")
+        }
+        return kotlin.math.log10(x)
+    }
+    fun ln(x: Double): Double {//натуральный логарифм
+        if (x <= 0) {
+            throw ArithmeticException("Логарифм от отрицательного числа!")
+        }
+        return kotlin.math.ln(x)
+    }
+}
+
+// Функция для вычисления результата
+fun vichislenie(primer: String): Double {
+    val chasti = primer.trim().split("\\s+".toRegex())
+    //trim() - удаляет пробелы с начала и конца строки
+    //split("\\s+".toRegex()) - разделяет строку по пробелам
+
+    // проверяет из скольки частей состоит строка (если 2 части - синусы и косинусы, 3 - плюсы и минусы)
+    if (chasti.size == 2) { //если 2 части
+        val chislo = chasti[1].toDouble() //перевод числа в double
+        return when (chasti[0].lowercase()) { //перевод в нижний регистр
+            "sqrt" -> Calculator.korene(chislo) //корень
+            "sin" -> Calculator.sinus(chislo) //синус
+            "cos" -> Calculator.cosinus(chislo) //косинус
+            "tan" -> Calculator.tangens(chislo) //тангенс
+            "log" -> Calculator.log10(chislo) //логарифм
+            "ln" -> Calculator.ln(chislo) //натуральный логарифм
+            else -> throw IllegalArgumentException("Неизвестная операция: ${chasti[0]}")
+        }
+    }
+    if (chasti.size == 3) { //если 3 части
+        val x = chasti[0].toDouble() //перевод 1 числа в double
+        val y = chasti[2].toDouble()//перевод 2 числа в double
+        return when (chasti[1]) {
+            "+" -> Calculator.plus(x, y)
+            "-" -> Calculator.minus(x, y)
+            "*" -> Calculator.umnoshite(x, y)
+            "/" -> Calculator.delenie(x, y)
+            "^" -> Calculator.stepene(x, y) //степень
+            else -> throw IllegalArgumentException("Неизвестная операция: ${chasti[1]}")
+        }
+    }
+    // если пользовательне так ввел пример
+    throw IllegalArgumentException("Неверный формат. Пример ввода: 2 + 2 или sin 30")
+}
+
+// База
+fun main() {
+    println("Инженерный калькулятор.")
+    println("Пример ввода: 2 + 2 или sin 30")
+    println("Для выхода введите: exit\n")
+
+    while (true) {
+        val primer = readLine() ?: continue //если строка пустая, то программа снова будет ждать ввод от пользователя
+
+        when (primer.lowercase()) {
+            "exit"-> break
+            else -> {
+                try {
+                    val result = vichislenie(primer)
+                    println("= $result")
+                }
+                catch (e: Exception) {
+                    println("Ошибка: ${e.message}")
+                }
+            }
+        }
+    }
+    println("Завершение работы...")
+}
